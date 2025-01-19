@@ -1,0 +1,247 @@
+@charset "utf-8";
+/* CSS Document */
+/*css 初始化 begin */ html, body, ul, li, ol, dl, dd, dt, p, h1, h2, h3, h4, h5, h6, form, fieldset, legend, img {
+  margin: 0;
+  padding: 0;
+}
+fieldset, img, input, button {
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline-style: none;
+}
+ul, ol {
+  list-style: none;
+}
+input {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+select, input {
+  vertical-align: middle;
+}
+select, input, textarea {
+  margin: 0;
+}
+textarea {
+  resize: none;
+}
+img {
+  border: 0;
+  vertical-align: middle;
+}
+table {
+  border-collapse: collapse;
+}
+body {
+  background-image: url("background.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+}
+a {
+  color: #666;
+  text-decoration: none;
+}
+a:hover {
+  color: #C81623;
+}
+h1, h2, h3, h4, h5, h6 {
+  text-decoration: none;
+}
+s, i, em {
+  text-decoration: none;
+  text-align: center;
+}
+/*index*/
+.fl {
+  float: none;
+  width: 100%;
+  clear: both;
+  height: 5px
+}
+.top {
+  background-color: #400000;
+  height: 30px;
+  width: 100%;
+}
+.top li {
+  float: right;
+  height: 30px;
+  padding: 0px 10px;
+}
+.top li a {
+  font-size: 12px;
+  color: #FFCC33;
+  display: block;
+  line-height: 30px;
+  height: 30px;
+}
+.body {
+  margin: 0 auto;
+  padding-top: 125px;
+}
+.title {
+  text-align: center;
+  padding: 10px;
+  background-image: url(dzj_in_nav.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 90px;
+}
+.title h1 {
+  font-size: 2em;
+  line-height: 90px;
+  padding-top: 0px;
+  color: #400000;
+  background-image: url("dzj_in_l_tb.jpg"),url("dzj_in_l_tb.jpg");
+  background-repeat: no-repeat,no-repeat;
+  background-position: left center,right center;
+}
+.menu {
+  height: 100%;
+ /* padding: 5px 10px 5px 25px;
+  	background-image: url(footer_bg01.jpg);
+	background-repeat: repeat-x;
+	background-position: bottom;*/
+}
+.menu li {
+  width: 25%;
+  float: left;
+  
+}
+.menu li a {
+  margin: 3px 3px;
+  color: #400000;
+  height: 35px;
+  line-height: 35px;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  background-image: url("menu_01.gif"), url("menu_03.gif"), url("menu_02.gif");
+  background-repeat: no-repeat, no-repeat, repeat-x;
+  background-position: left center, right center, center center;
+}
+.table {
+  /* margin: 2px;*/
+  padding-left: 5px;
+  padding-right: 5px;
+  background-image: url("ilist960_01.jpg"), url("ilist960_05.jpg"), url("ilist960_03.jpg");
+  background-repeat: no-repeat, no-repeat, repeat-y;
+  background-position: top center, bottom center, center center;
+}
+.table table {
+  width: 100%;
+  border: 1px solid rgba(208, 199, 182, 1.00);
+  font-size: 0.9em;
+}
+.table table td {
+  text-align: center;
+  line-height: 35px;
+}
+.table table a {
+  padding-left: 11px;
+  background-image: url("dian.png");
+  background-repeat: no-repeat;
+  background-position: 0px center;
+  font-size: 1.1em;
+  color: #400000;
+}
+div a:hover {
+  color: #C81623;
+}
+.foot {
+	width: 100%;
+	height: 270px;
+	margin-top: 20px;
+	margin-bottom: 40px;
+	background-image: url("ilist960_01.jpg"), url("ilist960_05.jpg"), url("ilist960_03.jpg");
+	background-repeat: no-repeat, no-repeat, repeat-y;
+	background-position: top center, bottom center, center center;
+	overflow: hidden;
+}
+.footleft {
+  margin: 5px 10px;
+  float: left;
+  width: 248px;
+  height: 256px;
+  background-image: url("qldzj_in_l_jj.jpg");
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.footright {
+  padding-left: 265px;
+  padding-top: 20px;
+  text-align: center;
+}
+#myBtn {
+color: #C81623;
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 999;
+    border: none;
+    outline: none;
+      background-color: #555;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px; 
+}
+#myBtn:hover {
+    background-color: #400000;
+}
+@media screen and (min-width:1000px) {
+  .body {
+    width: 970px
+  }
+
+    
+ 
+}
+@media screen and (max-width: 1000px) {
+  .body {
+    width: 100%
+  }
+
+    
+  
+}
+@media screen and (max-width: 630px) {
+
+    
+  
+  .menu li a {
+    font-size: 0.8em;
+  }
+  .table table a {
+    font-size: 1.1em;
+    color: #400000;
+  }
+  .table table {
+    font-size: 0.8em
+  }
+  .title h1 {
+    font-size: 1.6em;
+  }
+  .table table td {
+    overflow: hidden;
+    line-height: 25px;
+  }
+  
+  .foot p{
+	   font-size: 0.6em;
+	  }
+.footleft{
+	float:none;
+	width:100%;
+
+	}
+  .footright{
+	  display:none;
+	 
+
+	 
+	  }
+  
+}

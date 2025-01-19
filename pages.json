@@ -1,0 +1,53 @@
+{
+	"pages": [ 
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "诸恶莫作 众善奉行"
+				// "navigationStyle": "custom" //去掉标题栏
+			}
+		},
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": "历境炼心 对境不惑 不被境转"
+			}
+		},
+		{
+			"path": "pages/books/books",
+			"style": {
+				"navigationBarTitleText": "经文"
+			}
+			
+		},
+		{
+			"path": "pages/read/read"
+			
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {},
+	"tabBar": {
+			"color": "#999999",
+			"selectedColor": "#2d3538",
+			"borderStyle": "black",
+			"backgroundColor": "#ffffff",
+	
+			"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/icons/fojing.png",
+				"selectedIconPath": "static/icons/chan.png",
+				"text": "出世"
+			}, {
+				"pagePath": "pages/user/user",
+				"iconPath": "static/icons/bo.png",
+				"selectedIconPath": "static/icons/lian.png",
+				"text": "入世"
+			}]
+		}
+}

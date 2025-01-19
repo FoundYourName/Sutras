@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+	<head>
+		<meta charset="UTF-8">
+		<title class="title">电子书epub</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="css/lzmui.css">
+		<style type="text/css">
+			html,body{margin: 0;padding: 0;width: 100%;height: 100%;overflow: hidden;}
+			#content {width: 100%;height: 100%;}
+			.footer{transition: all 0.5s;position: fixed;bottom: 0;width: 100%;}
+			.footer .mui-input-row{width:100%;display: flex;}
+			.r-label{
+				width: 70px!important;font-size: 14px;color: #000;text-align: left;
+			}
+			.r-btn{display: flex;align-items: center;}
+			.r-btn .r-b-item{ border-radius: 5px; color: #007aff; background-color: #fff;border: 0.5px solid #007aff; margin-right: 10px;font-size: 12px;padding: 0px 10px;height: 25px;line-height: 25px;}
+			.r-btn .item-active{color: #fff; background-color: #007aff; }
+			.r-btn .bg-item {
+				width: 45px;height: 25px;margin-right: 5px;
+			}
+			.header{transition: all 0.5s;position: fixed;top: 0;width: 100%;overflow: hidden;display: flex;align-items: flex-end;
+				padding: 0 15px;z-index: 100;
+			}
+			.header-icon{
+				margin-bottom: 12px;margin-right: 10px;display: flex;align-items: center;
+			}
+			.menu{
+				position: fixed;left: 0;width:0;transition: all 0.5s;height: 100%;z-index: 101;overflow: hidden;padding-top: 44px;
+			}
+			.menu .ul .li{width: 290px;font-size: 14px;padding:5px 15px;}
+			.mui-search{padding: 0 12px;display: flex;align-items: flex-start;}
+			.searchBt{white-space: nowrap; height: 34px;line-height: 34px;width: 60px;text-align: center;font-size: 14px;}
+			.menu .ul .searchLi{
+				white-space: inherit;padding:4px 15px;
+				word-break: break-all; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp:4; /* 这里是超出几行省略 */
+			}
+			
+			.content-search-text{color: red;}
+			
+			#mask{position: fixed;top: 0;left: 0;right: 0;bottom: 0;background: #f0f0f0;z-index: 103;}
+		</style>
+		
+	</head>
+
+	<body>
+		
+		<div id="content" class="content" :style="{background:bgList[setting.bg].content}">
+			<div id="mask" v-if="!book"></div>
+			<div class="header" :style="{height:header.height+'px',background:bgList[setting.bg].header}" @click.stop="">
+				<div @click.stop="goback" class="header-icon mui-icon mui-icon-back"><span style="font-size: 12px;" >返回</span></div>
+				<div @click.stop="showMenu" class="header-icon mui-icon mui-icon-list" style="margin-bottom: 10px;"></div>
+			</div>
+			<div class="menu" :style="{width:menu.width+'px',background:bgList[setting.bg].menu}" @click.stop="">
+				<div class="mui-input-row mui-search">
+				    <input ref="lzSearch" type="search" class="mui-input-clear" placeholder="请输入关键词" @input="changeInput">
+					<div class="searchBt" @click="searchFn">搜索</div>
+				</div>
+				<div class="ul" style="height: 100%;overflow: auto;padding-bottom: 90px;" v-if="menu.searchList.length==0">
+					<div class="li" v-for="(item,index) in navigation.toc" :key="index" @click="menuLi(item)">{{item.label}}</div>
+				</div>
+				<div class="ul" style="height: 100%;overflow: auto;" v-else>
+					<div class="li searchLi" v-for="(item,index) in menu.searchList" :key="index" @click="seachClick(item)" v-html="item.excerpt"></div>
+				</div>
+			</div>
+			<div id="area"></div>
+			<div class="footer" :style="{height:footer.height+'px',background:bgList[setting.bg].footer}" @click.stop="">
+				<div style="margin-top: 10px;">
+					<div class="mui-input-row mui-input-range">
+						<label class="r-label">字体:</label>
+						<input ref="sizeInput" type="range" min="14" max="40" :value="setting.fontSize" style="width: 250px;" @change="changeSize">
+					</div>
+				</div>
+				<div>
+					<div class="mui-input-row mui-input-range">
+						<label class="r-label">动画:</label>
+						<div class="r-btn">
+							<div class="r-b-item" :class="{'item-active':setting.turnPages==1}" @click="turnPagesFn(1)">上下滑动</div>
+							<div class="r-b-item" :class="{'item-active':setting.turnPages==2}" @click="turnPagesFn(2)">左右滑动</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div class="mui-input-row mui-input-range">
+						<label class="r-label">背景:</label>
+						<div class="r-btn">
+							<div class="bg-item" style="background: #ded1b3;" @click="setTheme(0)"></div>
+							<div class="bg-item" style="background: #6d583b;" @click="setTheme(1)"></div>
+							<div class="bg-item" style="background: #f5f5f5;" @click="setTheme(2)"></div>
+							<div class="bg-item" style="background: #abcaab;" @click="setTheme(3)"></div>
+							<div class="bg-item" style="background: #626a75;" @click="setTheme(4)"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="https://js.cdn.aliyun.dcloud.net.cn/dev/uni-app/uni.webview.1.5.2.js"></script>
+		<script type="text/javascript" src="js/vue.min.js"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.88/dist/epub.js"></script>
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.1/jszip.min.js"></script> -->
+		<!-- <script type="text/javascript" src="js/lzepub.js"></script> -->
+		<script type="text/javascript" src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/global.js"></script>
+		<script type="text/javascript">
+			// 为了解决uni-app 的web-view组件中加载mui开发的H5页面时，点击返回报错Uncaught ReferenceError: mui is not defined at __uniappview.html:1
+			mui.init({
+				keyEventBind: {
+					backbutton: false //关闭back按键监听
+				}
+			})
+			let that;
+			var vm = new Vue({
+				el: '#content',
+				data: {
+					book:null,
+					rendition:null,
+					seach:{
+						show:false,
+						width:0,
+					},
+					footer:{
+						show:false,
+						height:0,
+					},
+					header:{
+						show:false,
+						height:0,
+					},
+					menu:{
+						show:false,
+						width:0,
+						searchList:[],
+					},
+					navigation:null,
+					setting:{//当前设置的参数
+						fontSize:14,
+						turnPages:2,//1上下翻页 2左右
+						progress:0.00001,//当前进度
+						url:'',
+						bg:0,//背景颜色下标
+					},
+					bgList:[
+						{header:'#f3e4c3',footer:'#f3e4c3',content:'#ded1b3',menu:'#9c927e'},
+						{header:'#b09c80',footer:'#b09c80',content:'#6d583b',menu:'#94836b'},
+						{header:'#ffffff',footer:'#ffffff',content:'#f5f5f5',menu:'#c8c8c8'},
+						{header:'#cdeccd',footer:'#cdeccd',content:'#abcaab',menu:'#9eb59e'},
+						{header:'#545961',footer:'#545961',content:'#626a75',menu:'#787f8a'},
+					]
+				},
+				mounted() {
+					that = this;
+					document.addEventListener('plusready', (e)=>{
+						let {debug} = plus.webview.currentWebview();
+						this.debug = debug;
+						// location.href = 'callback?retype=updateOption';
+						
+					}, false);
+					try{
+						mui.showLoading('数据正在加载中...')
+						if(JSON.parse(localStorage.getItem('book-setting'))){
+							this.setting=JSON.parse(localStorage.getItem('book-setting'))
+							
+						}
+						//如果是h5页面则直接显示
+						if(GLOBAL_getUrlParam('url')){
+							let option={
+								url:GLOBAL_getUrlParam('url')
+							}
+							this.show(JSON.stringify(option))
+						}
+					}catch(e){
+						//TODO handle the exception
+					}
+					
+					// this.show()
+				},
+				watch: {
+					setting:{
+						handler(newValue){
+							localStorage.setItem('book-setting',JSON.stringify(newValue))
+						},
+						deep:true
+					}
+				},
+				methods: {
+					goback(){
+						uni.navigateBack({
+							delta: 1
+						});
+					},
+					changeInput(event){
+						let data=event.currentTarget.value
+						if(!data){
+							this.menu.searchList=[]
+						}
+					},
+					//搜索
+					searchFn(event){
+						console.log(this.$refs.lzSearch.value);
+						let data = this.$refs.lzSearch.value
+						if(!data){
+							this.menu.searchList=[]
+							return
+						}
+						this.search(data)
+						
+					},
+					//设置主题
+					setTheme(type){
+						this.setting.bg=type
+					},
+					//切换翻页动画
+					turnPagesFn(type){
+						console.log(type);
+						this.setting.turnPages=type
+						this.book.destroy()
+						this.show()
+					},
+					//点击某个菜单
+					menuLi(item){
+						this.book.rendition.display(item.href)
+						this.showMenu()
+					},
+					//搜索点击
+					seachClick(item){
+						this.book.rendition.display(item.cfi)
+						this.book.rendition.annotations.highlight(item.cfi)
+						this.showMenu()
+					},
+					//显示菜单
+					showMenu(){
+						this.menu.show=!this.menu.show
+						if(this.menu.show){
+							this.menu.width=300
+						}else{
+							this.menu.width=0
+						}
+					},
+					//改变字体大小
+					changeSize(event){
+						this.setting.fontSize=event.currentTarget.value
+						console.log(event.currentTarget.value);
+						console.log(this.book.rendition.themes);
+						this.book.rendition.themes.fontSize(event.currentTarget.value + 'px')
+					},
+					
+					show(option="{}"){
+						this.initFn(option)
+					},
+					initFn(option){
+						try{
+							if(JSON.parse(option).url){
+								this.setting.url = decodeURIComponent(JSON.parse(option).url);
+							}
+							console.log(JSON.stringify(this.setting));
+							// this.setting.url='https://vkceyugu.cdn.bspapp.com/VKCEYUGU-76e84fbd-eabd-4327-8282-9419ae18e17c/891355ab-6652-4372-afb4-d41ddc5b7e97.epub'
+							this.book = ePub(this.setting.url, {
+								// openAs: "epub"
+							});
+							this.rendition = this.book.renderTo("area", {
+								snap: true,//翻页动画
+								restore: true,
+								width: '100%',
+								height: "100vh",
+								manager: "continuous",
+								flow: this.setting.turnPages==1?"scrolled-doc":'paginated',//scrolled-doc滚动 paginated分页
+							});
+							this.book.rendition.display()
+							//点击上一页和下一页
+							this.book.rendition.on('click', (event, contents) => {
+								console.log(event);
+								if(event.offsetX<100){ //上一页
+									this.book.rendition.prev().then(() => {
+										this.updateProgress()
+									})   
+								}else if(event.offsetX>270){//下一页
+									this.book.rendition.next().then(() => {
+										this.updateProgress()
+									})  
+								}else if(event.offsetX>100&&event.offsetX<270){//点击中间
+									this.footer.show=!this.footer.show
+									this.header.show=!this.header.show
+									if(this.footer.show==true){
+										this.footer.height=130
+										this.header.height=70
+									}else{
+										this.footer.height=0
+										this.footer.show=false
+										this.header.height=0
+										this.header.show=false
+									}
+								}
+								if(this.menu.show){
+									this.menu.width=0
+									this.menu.show=false
+								}
+							})
+							//生成目录
+							this.book.ready.then(() => {
+								mui.hideLoading()
+								console.log(this.book.navigation);
+								// 生成目录
+								this.navigation = this.book.navigation
+								// 生成Locations对象
+								return this.book.locations.generate()
+							}).then(result => {
+								console.log(this.setting.progress);
+								mui.hideLoading()
+								// document.getElementById('content').style.opacity=1
+								// 根据 progress 渲染电子书    // progress数值（0-1）小数
+								// this.displayProgress(this.setting.progress)
+								  // console.log(result);
+								// // 保存locations对象
+								// this.locations = this.book.locations
+								// // 标记电子书为解析完毕状态
+								// this.bookAvailable = true
+							}).catch(err=>{
+								mui.hideLoading()
+							})
+							
+						}catch(e){
+							console.error('参数设置错误',e)
+						}
+					},
+					//关闭遮罩测
+					close() {
+						location.href = 'callback?retype=close&data=' + escape('关闭遮罩');
+					},
+					
+					doSearch(q){
+						return Promise.all(this.book.spine.spineItems.map(item => 
+							item.load(this.book.load.bind(this.book))
+								.then(item.find.bind(item, q))
+								.finally(item.unload.bind(item))
+						)).then(results => Promise.resolve([].concat.apply([], results)))
+					},
+					//搜索关键词 注意只有页面加载完成才有效果，不然没有效果
+					search(keyword){
+						mui.showLoading('正在搜索...');
+						this.doSearch(keyword).then((result) => {
+							let searchList = result.map((item) => {
+								item.excerpt = item.excerpt.replace(keyword,
+									`<span class="content-search-text">${keyword}</span>`
+								);
+								return item;
+							});
+							console.log(searchList);
+							this.menu.searchList=searchList
+							mui.hideLoading()
+						});
+					},
+					updateProgress () {
+						// 获得当前章节的百分比并设置 保留6位小数
+						// const currentLocation = this.book.rendition.currentLocation()
+						// this.setting.progress = currentLocation.end.percentage.toFixed(6)
+						// console.log('updateProgress:', this.setting.progress)
+					},
+					displayProgress (progress) {
+						// 获得cfi地址 // progress的范围: 0-1
+						const location = this.book.locations.cfiFromPercentage(progress)
+						// 根据cfi地址渲染电子书
+						this.book.rendition.display(location)
+					},
+				}
+			});
+			
+			
+		</script>
+	</body>
+
+</html>
