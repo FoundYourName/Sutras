@@ -4,6 +4,8 @@ Sutras
 
 [项目体验网站](https://static-mp-ca9b6ada-ed21-4191-b5f5-3ff3dcf7f969.next.bspapp.com/cjg/index.html#/)
 
+[项目gitee仓库地址](https://gitee.com/ljl666888/cjg)
+
 ## 实际效果截图
 
 ### web效果
