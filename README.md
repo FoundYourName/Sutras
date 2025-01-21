@@ -2,6 +2,8 @@
 
 Sutras
 
+[项目体验网站](https://static-mp-ca9b6ada-ed21-4191-b5f5-3ff3dcf7f969.next.bspapp.com/cjg/index.html#/)
+
 ## 实际效果截图
 
 ### web效果
